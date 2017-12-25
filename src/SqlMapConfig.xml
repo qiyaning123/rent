@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<!DOCTYPE configuration    
+PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"    
+"http://ibatis.apache.org/dtd/ibatis-3-config.dtd">    
+       <configuration>  
+        <settings >  
+            <!-- 不启用延迟加载 -->  
+            <setting name="lazyLoadingEnabled" value="false"/>
+            <setting name="callSettersOnNulls" value="true"/>
+            <setting name="cacheEnabled" value="true"/> 
+        </settings>  
+             <!-- 为bean 起别名：使用它们你可以不用输入类的全路径，type为相关bean的路径，alias为bean起别名 -->  
+            <typeAliases>  
+                <typeAlias type="com.rent.user.bean.UserBean" alias="userBean"/>    
+                <typeAlias type="com.rent.room.bean.RoomBean" alias="roomBean"/>    
+                <typeAlias type="com.rent.room.bean.PicBean" alias="picBean"/>    
+                <typeAlias type="com.rent.dictionary.bean.DictionaryBean" alias="dictionaryBean"/>    
+                <typeAlias type="com.rent.region.bean.RegionBean" alias="regionBean"/>    
+                <typeAlias type="com.rent.city.bean.CityBean" alias="cityBean"/>    
+                <typeAlias type="com.rent.province.bean.ProvinceBean" alias="provinceBean"/>    
+            </typeAliases>  
+              
+            <!-- 配置orm映射 -->  
+            <mappers>  
+                <mapper resource="resource/userBean.xml"/>    
+                <mapper resource="resource/roomBean.xml"/>   
+                <mapper resource="resource/picBean.xml"/>   
+                <mapper resource="resource/dictionaryBean.xml"/>    
+                <mapper resource="resource/regionBean.xml"/>    
+                <mapper resource="resource/cityBean.xml"/>    
+                <mapper resource="resource/provinceBean.xml"/>    
+            </mappers>  
+       </configuration>  

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>   
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"   
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+  
+<!--Mapper配置文件主要是实现POJO类和sql之间的映射 其中#{id}是需要传入的参数，parameterType是参数的类型，resultMap是查询返回的结果类-->  
+<!-- 配置orm映射  确保数据库中的列能和bean中的列相对应  -->  
+<!--如果返回类型为resultType时，java对象的属性应和数据库表里的各字段保持一致，这样在查出结果后mybatis会将Map里面的键值对取出赋给resultType所指定的对象对应的属性。  
+如果不一致要写成下面的：用restutMap -->  
+  
+  
+<mapper  namespace="com.rent.room.dao.PicDao" > <!--配置到接口即可-->  
+  <sql id="Base_Column_List" >
+    pic,room_id,type
+  </sql>
+<!--当实体类属性跟数据库字段不一致时映射结果集: 返回用restutMap-->  
+<resultMap type="picbean"  id="picMap">
+	<id  property="room_id"      column="id"/>  
+	<id  property="pic"    column="pic"/> 
+</resultMap>  
+  
+<!-- 房间信息详情 -->
+<select id="getPic" parameterType="picBean" resultMap="picMap">
+select  * from  pic where room_id=#{id}
+</select>  
+
+<!-- 插入图片 -->
+<insert id="addPic" parameterType="picbean">  
+	 insert into pic (room_id,pic,type) values (#{room_id},#{pic},#{type})
+</insert>
+  
+<!-- <pre name="code" class="java"> 删除  -->
+<delete id="deletePic" parameterType="java.lang.Integer">  
+delete pic where room_id=#{room_id}  
+</delete>  
+  
+</mapper>  

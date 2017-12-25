@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>   
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"   
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+  
+<!--Mapper配置文件主要是实现POJO类和sql之间的映射 其中#{id}是需要传入的参数，parameterType是参数的类型，resultMap是查询返回的结果类-->  
+<!-- 配置orm映射  确保数据库中的列能和bean中的列相对应  -->  
+<!--如果返回类型为resultType时，java对象的属性应和数据库表里的各字段保持一致，这样在查出结果后mybatis会将Map里面的键值对取出赋给resultType所指定的对象对应的属性。  
+如果不一致要写成下面的：用restutMap -->  
+  
+<mapper  namespace="com.rent.room.dao.RoomDao" > <!--配置到接口即可-->  
+  <sql id="Base_Column_List" >
+    id,title,type,type_id,province_id,province,city_id,city,district_id,district,community,address,
+    shi,ting,wei,area,decoration,namse,sex,phone,
+    price,rate_id,creater,valid,createdatetime,updatedatetime
+  </sql>
+<!--当实体类属性跟数据库字段不一致时映射结果集: 返回用restutMap-->  
+<resultMap type="roombean"  id="roomMap">  
+	<id  property="type_name"   column="type_name"/>  
+	<id  property="region_name"   column="region_name"/>  
+	<id  property="city_name"    column="city_name"/>  
+	<id  property="decoration_name"    column="decoration_name"/>  
+	<id  property="rate_name"    column="rate_name"/>  
+	<id  property="creater_name"    column="creater_name"/>  
+	<id  property="pic"    column="pic"/>  
+</resultMap>  
+  
+  
+<!-- 指定主键增加 -->  
+<insert id="addRoom" parameterType="roombean">  
+	 insert into room 
+    (  
+    title,type,type_id,province_id,province,city_id,city,district_id,district,community,address,
+    shi,ting,wei,area,decoration_id,name,sex,phone,
+    price,rate_id,creater,createdatetime,updatedatetime)   
+    values  
+    (  
+    #{title},  
+    #{type},  
+    #{type_id},  
+    #{province_id},#{province},#{city_id},#{city},#{district_id},#{district},  
+    #{community},  
+    #{address}, 
+     
+    #{shi},  
+    #{ting},  
+    #{wei},  
+    #{area},  
+    #{decoration_id},  
+    #{name},  
+    #{sex},  
+    #{phone},
+      
+    #{price},  
+    #{rate_id} , 
+    #{creater},
+    now(),  
+    now() 
+    )
+</insert>
+<!-- 房间信息详情 -->
+<select id="getRoom" parameterType="roomBean" resultMap="roomMap">
+select  ta.*,tb.dsc type_name,tf.name region_name,tc.dsc decoration_name,td.dsc rate_name,te.name creater_name,tg.name city_name from room ta
+left join dictionary tb on ta.type_id=tb.id
+left join dictionary tc on ta.decoration_id=tc.id
+left join dictionary td on ta.rate_id=td.id
+left join user te on ta.creater=te.id
+left join region tf on ta.region_id=tf.id
+left join city tg on tf.region_id=tg.id
+where ta.id=#{id}
+</select> 
+<!-- findPageBreakByCondition 查询所有记录  -->
+
+	<select id="findPageBreakByCondition" resultMap="roomMap" parameterType="roomBean">
+
+		 SELECT
+
+		 <include refid="Base_Column_List" />
+
+		 FROM room
+
+		  <trim prefix="WHERE" prefixOverrides="AND|OR">
+
+		  1=1 
+
+			<if test="title != null and title !='' ">
+
+				 and title = #{title} 
+
+			</if>
+
+			<if test="type != null and type !='' ">
+
+				 and type = #{type} 
+
+			</if>
+
+			<if test="typeId != null and typeId !='' ">
+
+				 and type_id = #{typeId} 
+
+			</if>
+
+			<if test="provinceId != null and provinceId !='' ">
+
+				 and province_id = #{provinceId} 
+
+			</if>
+
+			<if test="province != null and province !='' ">
+
+				 and province = #{province} 
+
+			</if>
+
+			<if test="cityId != null and cityId !='' ">
+
+				 and city_id = #{cityId} 
+
+			</if>
+
+			<if test="city != null and city !='' ">
+
+				 and city = #{city} 
+
+			</if>
+
+			<if test="districtId != null and districtId !='' ">
+
+				 and district_id = #{districtId} 
+
+			</if>
+
+			<if test="district != null and district !='' ">
+
+				 and district = #{district} 
+
+			</if>
+
+			<if test="community != null and community !='' ">
+
+				 and community = #{community} 
+
+			</if>
+
+			<if test="address != null and address !='' ">
+
+				 and address = #{address} 
+
+			</if>
+
+			<if test="shi != null and shi !='' ">
+
+				 and shi = #{shi} 
+
+			</if>
+
+			<if test="ting != null and ting !='' ">
+
+				 and ting = #{ting} 
+
+			</if>
+
+			<if test="wei != null and wei !='' ">
+
+				 and wei = #{wei} 
+
+			</if>
+
+			<if test="area != null and area !='' ">
+
+				 and area = #{area} 
+
+			</if>
+
+			<if test="decorationId != null and decorationId !='' ">
+
+				 and decoration_id = #{decorationId} 
+
+			</if>
+
+			<if test="name != null and name !='' ">
+
+				 and name = #{name} 
+
+			</if>
+
+			<if test="sex != null and sex !='' ">
+
+				 and sex = #{sex} 
+
+			</if>
+
+			<if test="phone != null and phone !='' ">
+
+				 and phone = #{phone} 
+
+			</if>
+
+			<if test="price != null and price !='' ">
+
+				 and price = #{price} 
+
+			</if>
+
+			<if test="rateId != null and rateId !='' ">
+
+				 and rate_id = #{rateId} 
+
+			</if>
+
+			<if test="creater != null and creater !='' ">
+
+				 and creater = #{creater} 
+
+			</if>
+
+			<if test="createdatetime != null and createdatetime !='' ">
+
+				 and createdatetime = #{createdatetime} 
+
+			</if>
+
+			<if test="updatedatetime != null and updatedatetime !='' ">
+
+				 and updatedatetime = #{updatedatetime} 
+
+			</if>
+
+			<if test="valid != null and valid !='' ">
+
+				 and valid = #{valid} 
+
+			</if>
+
+
+
+	</trim>
+
+	</select>
+
+
+
+	<!-- findNumberByCondition 查询所有记录  -->
+
+	<select id="findNumberByCondition" resultType="java.lang.Integer" parameterType="map">
+
+		 SELECT
+
+		 count(0) as a 
+
+		 FROM room
+
+		  <trim prefix="WHERE" prefixOverrides="AND|OR">
+
+		  1=1 
+
+			<if test="title != null and title !='' ">
+
+				 and title = #{title} 
+
+			</if>
+
+			<if test="type != null and type !='' ">
+
+				 and type = #{type} 
+
+			</if>
+
+			<if test="typeId != null and typeId !='' ">
+
+				 and type_id = #{typeId} 
+
+			</if>
+
+			<if test="provinceId != null and provinceId !='' ">
+
+				 and province_id = #{provinceId} 
+
+			</if>
+
+			<if test="province != null and province !='' ">
+
+				 and province = #{province} 
+
+			</if>
+
+			<if test="cityId != null and cityId !='' ">
+
+				 and city_id = #{cityId} 
+
+			</if>
+
+			<if test="city != null and city !='' ">
+
+				 and city = #{city} 
+
+			</if>
+
+			<if test="districtId != null and districtId !='' ">
+
+				 and district_id = #{districtId} 
+
+			</if>
+
+			<if test="district != null and district !='' ">
+
+				 and district = #{district} 
+
+			</if>
+
+			<if test="community != null and community !='' ">
+
+				 and community = #{community} 
+
+			</if>
+
+			<if test="address != null and address !='' ">
+
+				 and address = #{address} 
+
+			</if>
+
+			<if test="shi != null and shi !='' ">
+
+				 and shi = #{shi} 
+
+			</if>
+
+			<if test="ting != null and ting !='' ">
+
+				 and ting = #{ting} 
+
+			</if>
+
+			<if test="wei != null and wei !='' ">
+
+				 and wei = #{wei} 
+
+			</if>
+
+			<if test="area != null and area !='' ">
+
+				 and area = #{area} 
+
+			</if>
+
+			<if test="decorationId != null and decorationId !='' ">
+
+				 and decoration_id = #{decorationId} 
+
+			</if>
+
+			<if test="name != null and name !='' ">
+
+				 and name = #{name} 
+
+			</if>
+
+			<if test="sex != null and sex !='' ">
+
+				 and sex = #{sex} 
+
+			</if>
+
+			<if test="phone != null and phone !='' ">
+
+				 and phone = #{phone} 
+
+			</if>
+
+			<if test="price != null and price !='' ">
+
+				 and price = #{price} 
+
+			</if>
+
+			<if test="rateId != null and rateId !='' ">
+
+				 and rate_id = #{rateId} 
+
+			</if>
+
+			<if test="creater != null and creater !='' ">
+
+				 and creater = #{creater} 
+
+			</if>
+
+			<if test="createdatetime != null and createdatetime !='' ">
+
+				 and createdatetime = #{createdatetime} 
+
+			</if>
+
+			<if test="updatedatetime != null and updatedatetime !='' ">
+
+				 and updatedatetime = #{updatedatetime} 
+
+			</if>
+
+			<if test="valid != null and valid !='' ">
+
+				 and valid = #{valid} 
+
+			</if>
+
+
+
+	</trim>
+
+	</select>
+<!-- 查询所有 -->  
+<select id="queryCount" resultType="int">  
+select  count(*) as count from room  
+</select>  
+  
+<!-- 动态查询  -->  
+<select id="getListByType" parameterType="roombean" resultMap="roomMap">
+select ta.*,th.pic pic,tb.dsc type_name,tc.dsc decoration_name,td.dsc rate_name,te.name creater_name,tf.name region_name,tg.name city_name
+from room ta
+left join dictionary tb on ta.type_id=tb.id
+left join dictionary tc on ta.decoration_id=tc.id
+left join dictionary td on ta.rate_id=td.id
+left join user te on ta.creater=te.id
+left join region tf on ta.region_id=tf.id
+left join city tg on tf.region_id=tg.id
+left join (SELECT MAX(pic) pic,room_id,TYPE FROM pic  WHERE TYPE=1 GROUP BY room_id,TYPE) th on ta.id=th.room_id
+where 1=1
+<if test="type!=null"> and ta.type=#{type}</if>  
+<if test="type_id!=0"> and ta.type_id=#{type_id}</if>  
+order by ta.id desc
+</select>  
+
+
+ 
+  
+<update id="update" parameterType="roombean">  
+    update    room
+    <set>  
+        <if test="jzmc!=null">jzmc=#{jzmc},</if>  
+        <if test="!=null">=#{},</if>  
+        <if test="qibie_id!=null">qibie_id=#{qibie_id},</if>  
+        <if test="quyu_id!=null">quyu_id=#{quyu_id},</if>  
+        <if test="zhenqu_id!=null">zhenqu_id=#{zhenqu_id},</if>  
+        <if test="mianji!=null">mianji=#{mianji},</if>  
+        <if test="dizhi!=null">dizhi=#{dizhi},</if>  
+        <if test="yzmc!=null">yzmc=#{yzmc},</if>  
+        <if test="yzdh!=null">yzdh=#{yzdh},</if>  
+    </set>  
+    where id=#{id}  
+</update>  
+  
+<!-- <pre name="code" class="java"> 删除  -->  
+<delete id="deleteRoom" parameterType="java.lang.Integer">  
+update room set valid=0 where id=#{id}  
+</delete>  
+  
+<!--<pre name="code" class="java"> 批量删除，array传来的必须是一个数组，list传来的必须是一个list集合  -->  
+<delete id="deletebatch_" parameterType="java.util.List">  
+delete from room where id in  
+<foreach item="item" index="index" collection="array" open="(" separator="," close=")">  
+#{item}  
+</foreach>  
+</delete>  
+  
+</mapper>  

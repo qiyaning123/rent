@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd    
+                        http://www.springframework.org/schema/context    
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd    
+                        http://www.springframework.org/schema/mvc    
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">  
+    <!-- 自动扫描  
+    <context:component-scan base-package="com.cn.hnust" />   -->
+    <!-- 引入配置文件  
+    <bean id="propertyConfigurer"  
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="location" value="classpath:jdbc.properties" />  
+    </bean> 
+     --> 
+  
+     <!-- 创建连接池  配置连接池的属性值 -->
+    <bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+       <property name="driverClass" value="com.mysql.jdbc.Driver" />  
+        <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/rent" />  
+        <property name="user" value="root" />  
+        <property name="password" value="root" />  
+         <property name="MaxIdleTime" value="60"/>                          
+        <property name="MaxPoolSize" value="30"/>                         
+        <property name="MaxStatements" value="0"/>                        
+        <property name="MaxStatementsPerConnection" value="0"/>           
+        <property name="MinPoolSize" value="5"/>    
+        <property name="NumHelperThreads" value="3"/> 
+        <property name="testConnectionOnCheckout" value="false"/> 
+        <property name="InitialPoolSize" value="10"/> 
+        <property name="CheckoutTimeout" value="0"/>                      
+        <property name="IdleConnectionTestPeriod" value="60"/> 
+        <property name="BreakAfterAcquireFailure" value="true"/> 
+        <property name="AcquireRetryAttempts" value="30"/>
+       	<property name="AcquireRetryDelay" value="60"/>                 
+        <property name="AutoCommitOnClose" value="false"/>                               
+    </bean>
+    
+    <!-- dao中注入jdbctemplate对象 -->
+    <!--
+    <bean id="dao" class="com.rent">
+        <property name="jdbcTemplate" ref="jdbctemplate"></property>
+    </bean>   
+    -->             
+    
+    <!-- service中注入dao对象 -->
+    <!--
+    <bean id="service" class="org.service.Service">
+        <property name="dao" ref="dao"></property>
+    </bean>
+     -->
+    
+    <!-- 创建jdbctemplate对象  并且向其中注入连接池对象  dateSource是该对象中数据源的属性 
+    <bean id="jdbctemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="ds"></property>
+    </bean>
+    -->
+  
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx   
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="ds" />  
+    </bean>  
+    -->
+    
+    <bean id="sqlSessionFactory"  class="org.mybatis.spring.SqlSessionFactoryBean">            
+	    <property name="dataSource" ref="ds" />         
+	    <property name="configLocation"  value="classpath:SqlMapConfig.xml"></property>        
+	</bean>
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">  
+	    <constructor-arg ref="sqlSessionFactory"></constructor-arg>  
+	</bean>
+	<bean name="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">     
+        <property name="dataSource" ref="ds"></property>  
+ 	</bean>  
+  
+</beans>

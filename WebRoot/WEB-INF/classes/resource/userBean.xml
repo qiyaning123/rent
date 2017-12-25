@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>   
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"   
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">  
+  
+<!--Mapper配置文件主要是实现POJO类和sql之间的映射 其中#{id}是需要传入的参数，parameterType是参数的类型，resultMap是查询返回的结果类-->  
+<!-- 配置orm映射  确保数据库中的列能和bean中的列相对应  -->  
+<!--如果返回类型为resultType时，java对象的属性应和数据库表里的各字段保持一致，这样在查出结果后mybatis会将Map里面的键值对取出赋给resultType所指定的对象对应的属性。  
+如果不一致要写成下面的：用restutMap -->  
+  
+  
+<mapper  namespace="com.rent.user.dao.UserDao" > <!--配置到接口即可-->  
+  <!-- 列名
+  id,type,name,phone,pwd,idnumber,sex,birthday,email,createdatetime,updatedatetime,lastlogindatetime,lastloginip,lastlogindevice,valid 
+  -->
+<!--当实体类属性跟数据库字段不一致时映射结果集: 返回用restutMap  
+  <sql id="Base_Column_List" >
+    id,name,phone,type,pwd,valid,createdatetime
+  </sql>
+-->
+<resultMap type="userBean"  id="userMap">  
+<id  property="id"      column="id"/>  
+<id  property="type"   column="type"/> 
+<id  property="name"    column="name"/>  
+<id  property="phone"  column="phone"/>  
+<id  property="pwd"    column="pwd"/>  
+<id  property="idnumber"    column="idnumber"/>  
+<id  property="sex"    column="sex"/>  
+<id  property="birthday"    column="birthday"/>  
+<id  property="email"    column="email"/>  
+<id  property="createdatetime"    column="createdatetime"/>  
+<id  property="updatedatetime"    column="updatedatetime"/>  
+<id  property="lastlogindatetime"    column="lastlogindatetime"/>  
+<id  property="lastloginip"    column="lastloginip"/>  
+<id  property="lastlogindevice"    column="lastlogindevice"/>  
+<id  property="valid" column="valid"/>  
+</resultMap>  
+
+<!-- 查询电话是否重复 -->  
+<select id="checkPhone" resultType="int">  
+select  count(*) as count from  user  where phone=#{phone}
+</select>
+<!-- 注册 -->
+<insert id="addUser" parameterType="userBean">
+insert into  
+user( name,phone,pwd,idnumber,sex,birthday,email,createdatetime,updatedatetime,lastlogindatetime,lastloginip,lastlogindevice) 
+values(
+	#{name},#{phone},#{pwd},#{idnumber},#{sex},#{birthday},#{email},
+	now(),now(),now(),#{lastloginip},#{lastlogindevice}
+)
+<!--  insert into  user( name,phone,pwd,createdatetime) values(#{name}, #{phone},#{pwd},now())   -->
+</insert>  
+
+<!-- 修改信息 -->
+<update id="updateInfo" parameterType="java.lang.Integer">  
+    update userinfo  
+    <set>  
+        regist='1'
+    </set>  
+    where phone=#{phone}
+</update>  
+<!-- 修改信息 -->
+<update id="updateUser" parameterType="java.lang.Integer">  
+    update user   
+    <set>  
+        <if test="name!=null">name=#{name},</if>  
+        <if test="phone!=null">phone=#{phone},</if>  
+        <if test="idnumber!=null">idnumber=#{idnumber},</if>  
+        <if test="sex!=null">sex=#{sex},</if>  
+        <if test="birthday!=null">birthday=#{birthday},</if>  
+        <if test="email!=null">email=#{email},</if>  
+        updatedatetime=now()
+    </set>  
+    where id=#{id}  
+</update>  
+<!-- 修改密码 -->
+<update id="updatePwd" parameterType="java.lang.Integer">  
+    update user   
+    <set>  
+        <if test="pwd!=null">pwd=#{pwd},</if>
+        updatedatetime=now()
+    </set>  
+    where id=#{id}  
+</update>  
+
+<!-- <pre name="code" class="java"> 删除  -->  
+<delete id="deleteUser" parameterType="java.lang.String">  
+	update user  set valid= '0',updatedatetime=now() where id=#{id} 
+</delete>
+
+<delete id="delUser111" parameterType="java.lang.Integer">  
+delete from user where id = #{id}  
+</delete>  
+
+<!-- 登录 -->  
+<select id="getUser" parameterType="userBean" resultMap="userMap">
+select  * from  user where phone=#{phone} and pwd=#{pwd} and valid=1
+</select>  
+<!-- 查询所有 -->  
+<select id="selectCount" resultType="int">  
+select  count(*) as count from  user  
+</select>  
+
+<!-- 动态查询  -->  
+<select id="selectDynamic_SQL" parameterType="userBean" resultMap="userMap">  
+select *
+  from user 
+ where 1=1 
+<if test="phone!=null and phone!=''">  
+and phone like #{phone}  
+</if>  
+<if test="name!=null and name!=''">  
+and name like #{name}  
+</if>  
+order by id  
+</select> 
+
+</mapper>  
